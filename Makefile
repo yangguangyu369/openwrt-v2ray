@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2021 Xingwang Liao
+# Copyright (C) 2019 Xingwang Liao
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,266 +8,217 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-core
-PKG_VERSION:=4.43.0
-PKG_RELEASE:=2
+PKG_VERSION:=4.21.3
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=f27b8fe8e1e102b0297339ee368c8b650fde0f949e0d90e1229ff6744f99ba0f
+PKG_SOURCE_URL:=https://codeload.github.com/v2ray/v2ray-core/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=2052ea02ec5569b32748e5c859dcd066fa3818d5caafa70ddaf216576aaec188
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Xingwang Liao <kuoruan@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host PACKAGE_v2ray-core-mini:upx/host
+PKG_CONFIG_DEPENDS := \
+	CONFIG_V2RAY_JSON_V2CTL \
+	CONFIG_V2RAY_JSON_INTERNAL \
+	CONFIG_V2RAY_JSON_NONE \
+	CONFIG_V2RAY_EXCLUDE_V2CTL \
+	CONFIG_V2RAY_EXCLUDE_ASSETS \
+	CONFIG_V2RAY_COMPRESS_UPX \
+	CONFIG_V2RAY_DISABLE_NONE \
+	CONFIG_V2RAY_DISABLE_CUSTOM \
+	CONFIG_V2RAY_DISABLE_DNS \
+	CONFIG_V2RAY_DISABLE_LOG \
+	CONFIG_V2RAY_DISABLE_POLICY \
+	CONFIG_V2RAY_DISABLE_REVERSE \
+	CONFIG_V2RAY_DISABLE_ROUTING \
+	CONFIG_V2RAY_DISABLE_STATISTICS \
+	CONFIG_V2RAY_DISABLE_BLACKHOLE_PROTO \
+	CONFIG_V2RAY_DISABLE_DNS_PROXY \
+	CONFIG_V2RAY_DISABLE_DOKODEMO_PROTO \
+	CONFIG_V2RAY_DISABLE_FREEDOM_PROTO \
+	CONFIG_V2RAY_DISABLE_MTPROTO_PROXY \
+	CONFIG_V2RAY_DISABLE_HTTP_PROTO \
+	CONFIG_V2RAY_DISABLE_SHADOWSOCKS_PROTO \
+	CONFIG_V2RAY_DISABLE_SOCKS_PROTO \
+	CONFIG_V2RAY_DISABLE_VMESS_PROTO \
+	CONFIG_V2RAY_DISABLE_TCP_TRANS \
+	CONFIG_V2RAY_DISABLE_MKCP_TRANS \
+	CONFIG_V2RAY_DISABLE_WEBSOCKET_TRANS \
+	CONFIG_V2RAY_DISABLE_HTTP2_TRANS \
+	CONFIG_V2RAY_DISABLE_DOMAIN_SOCKET_TRANS \
+	CONFIG_V2RAY_DISABLE_QUIC_TRANS
+
+PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-PKG_CONFIG_DEPENDS:= \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_v2ctl \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_internal \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_none \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_exclude_v2ctl \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_exclude_assets \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_compress_upx \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_fakedns \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tls \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_udp \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_policy \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_reverse \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_routing \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_statistics \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_blackhole_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns_proxy \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dokodemo_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_freedom_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mtproto_proxy \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_shadowsocks_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_socks_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_trojan_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_vmess_proto \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tcp_trans \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_websocket_trans \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http2_trans \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_domain_socket_trans \
-	CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans
-
-GO_PKG:=github.com/v2fly/v2ray-core/v4
+GO_PKG:=v2ray.com/core
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:= \
-	github.com/v2fly/v2ray-core/v4.version=$(PKG_VERSION) \
-	github.com/v2fly/v2ray-core/v4.build=R$(PKG_RELEASE) \
-	github.com/v2fly/v2ray-core/v4.codename=OpenWrt
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/v2ray-core/Default
-  TITLE:=A platform for building proxies to bypass network restrictions.
-  URL:=https://www.v2fly.org
+define Package/v2ray-core
+  TITLE:=A platform for building proxies
+  URL:=https://www.v2ray.com
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Project V
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
-define Package/v2ray-core/Default/description
-  Project V is a set of network tools that help you to build your own computer network.
-  It secures your network connections and thus protects your privacy.
-endef
-
-define Package/v2ray-core
-$(call Package/v2ray-core/Default)
-  TITLE+= (Full)
-  VARIANT:=full
-  DEFAULT_VARIANT:=1
-  PROVIDES:=v2ray
+define Package/v2ray-core/config
+	source "$(SOURCE)/Config.in"
 endef
 
 define Package/v2ray-core/description
-$(call Package/v2ray-core/Default/description)
-  This package contains v2ray, v2ctl, geoip.dat and geosite.dat.
-endef
+Project V is a set of network tools that help you to build your own computer network.
+It secures your network connections and thus protects your privacy.
 
-define Package/v2ray-core-mini
-$(call Package/v2ray-core/Default)
-  TITLE+= (Minimal)
-  VARIANT:=mini
-  PROVIDES:=v2ray
-endef
-
-define Package/v2ray-core-mini/description
-$(call Package/v2ray-core/Default/description)
-  This package contains only v2ray.
-endef
-
-define Package/v2ray-core-mini/config
-	source "$(SOURCE)/Config-mini.in"
+  This package contains v2ray, v2ctl and v2ray-assets.
 endef
 
 V2RAY_SED_ARGS:=
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_v2ctl),y)
+ifeq ($(CONFIG_V2RAY_JSON_INTERNAL),y)
 V2RAY_SED_ARGS += \
-	s,// \(_ "github.com/v2fly/v2ray-core/v4/main/json"\),\1,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/main/jsonem",// &,;
-else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_json_none),y)
+	s/_ "v2ray.com\/core\/main\/json"/\/\/ &/; \
+	/\/\/ _ "v2ray.com\/core\/main\/jsonem"/s/\/\/ //;
+else ifeq ($(CONFIG_V2RAY_JSON_NONE),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/main/jsonem",// &,;
+	s/_ "v2ray.com\/core\/main\/json"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_custom_features),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_CUSTOM),y)
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_DNS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/dns",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/dns/fakedns",// &,;
-else ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_fakedns),y)
-V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/dns/fakedns",// &,;
+	s/_ "v2ray.com\/core\/app\/dns"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_log),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_LOG),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/log",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/log/command",// &,;
+	s/_ "v2ray.com\/core\/app\/log"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/app\/log\/command"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tls),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_POLICY),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/tls",// &,;
+	s/_ "v2ray.com\/core\/app\/policy"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_udp),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_REVERSE),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/udp",// &,;
+	s/_ "v2ray.com\/core\/app\/reverse"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_policy),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_ROUTING),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/policy",// &,;
+	s/_ "v2ray.com\/core\/app\/router"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_reverse),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_STATISTICS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/reverse",// &,;
+	s/_ "v2ray.com\/core\/app\/stats"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/app\/stats\/command"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_routing),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_BLACKHOLE_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/router",// &,;
+	s/_ "v2ray.com\/core\/proxy\/blackhole"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_statistics),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_DNS_PROXY),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/stats",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/app/stats/command",// &,;
+	s/_ "v2ray.com\/core\/proxy\/dns"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_blackhole_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_DOKODEMO_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/blackhole",// &,;
+	s/_ "v2ray.com\/core\/proxy\/dokodemo"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dns_proxy),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_FREEDOM_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/dns",// &,;
+	s/_ "v2ray.com\/core\/proxy\/freedom"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_dokodemo_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_MTPROTO_PROXY),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/dokodemo",// &,;
+	s/_ "v2ray.com\/core\/proxy\/mtproto"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_freedom_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_HTTP_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/freedom",// &,;
+	s/_ "v2ray.com\/core\/proxy\/http"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mtproto_proxy),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_SHADOWSOCKS_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/mtproto",// &,;
+	s/_ "v2ray.com\/core\/proxy\/shadowsocks"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_SOCKS_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/http",// &,;
+	s/_ "v2ray.com\/core\/proxy\/socks"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_shadowsocks_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_VMESS_PROTO),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/shadowsocks",// &,;
+	s/_ "v2ray.com\/core\/proxy\/vmess\/inbound"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/proxy\/vmess\/outbound"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_socks_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_TCP_TRANS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/socks",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/tcp"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_trojan_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_MKCP_TRANS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/trojan",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/kcp"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_vmess_proto),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_WEBSOCKET_TRANS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/vmess/inbound",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/proxy/vmess/outbound",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/websocket"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_tcp_trans),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_HTTP2_TRANS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/tcp",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/http"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/http"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_DOMAIN_SOCKET_TRANS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/kcp",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/domainsocket"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_websocket_trans),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_QUIC_TRANS),y)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/websocket",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/quic"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_http2_trans),y)
+ifeq ($(CONFIG_V2RAY_DISABLE_MKCP_TRANS)$(CONFIG_V2RAY_DISABLE_QUIC_TRANS),yy)
 V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/http",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/http",// &,;
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/noop"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/srtp"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/tls"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/utp"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wechat"/\/\/ &/; \
+	s/_ "v2ray.com\/core\/transport\/internet\/headers\/wireguard"/\/\/ &/;
 endif
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_domain_socket_trans),y)
-V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/domainsocket",// &,;
 endif
-
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans),y)
-V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/quic",// &,;
-endif
-
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_mkcp_trans)$(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_without_quic_trans),yy)
-V2RAY_SED_ARGS += \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/noop",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/srtp",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/tls",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/utp",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/wechat",// &,; \
-	s,_ "github.com/v2fly/v2ray-core/v4/transport/internet/headers/wireguard",// &,;
-endif
-
-endif # custom features
 
 GEOIP_VER:=latest
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
 define Download/geoip.dat
-  URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
+  URL:=https://github.com/v2ray/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
   HASH:=skip
@@ -277,24 +228,28 @@ GEOSITE_VER:=latest
 GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
 
 define Download/geosite.dat
-  URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
+  URL:=https://github.com/v2ray/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
   HASH:=skip
 endef
 
 define Build/Prepare
-	$(call Build/Prepare/Default)
+	$(Build/Prepare/Default)
 
-ifneq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_exclude_assets),y)
 	# move file to make sure download new file every build
 	mv -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/release/config/geoip.dat
 	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
-endif
 
+	( \
+		sed -i \
+			's/\(version[[:space:]]*=[[:space:]]*"\).*\("\)/\1$(PKG_VERSION)\2/; \
+			s/\(build[[:space:]]*=[[:space:]]*"\).*\("\)/\1OpenWrt - Release $(PKG_RELEASE)\2/' \
+			$(PKG_BUILD_DIR)/core.go ; \
+	)
 ifneq ($(V2RAY_SED_ARGS),)
 	( \
-		$(SED) \
+		sed -i \
 			'$(V2RAY_SED_ARGS)' \
 			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
 	)
@@ -302,21 +257,21 @@ endif
 endef
 
 define Build/Compile
-	$(eval GO_PKG_BUILD_PKG:=github.com/v2fly/v2ray-core/v4/main)
+	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/main)
 	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_compress_upx),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray || true
+ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
+	upx --ultra-brute $(GO_PKG_BUILD_BIN_DIR)/v2ray
 endif
 
-ifneq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_exclude_v2ctl),y)
-	$(eval GO_PKG_BUILD_PKG:=github.com/v2fly/v2ray-core/v4/infra/control/main)
+ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
+	$(eval GO_PKG_BUILD_PKG:=v2ray.com/core/infra/control/main)
 	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 
-ifeq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_compress_upx),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl || true
+ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
+	upx --ultra-brute $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 endif
 endif
 endef
@@ -327,41 +282,22 @@ define Package/v2ray-core/install
 	$(INSTALL_DIR) $(1)/usr/bin
 
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ray $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ctl $(1)/usr/bin
 
-	$(INSTALL_DIR) $(1)/usr/share/v2ray
-
-	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/release/config/{geoip,geosite}.dat \
-		$(1)/usr/share/v2ray
-endef
-
-define Package/v2ray-core-mini/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-
-	$(INSTALL_DIR) $(1)/usr/bin
-
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ray $(1)/usr/bin
-
-	$(INSTALL_DIR) $(1)/usr/share/v2ray
-
-ifneq ($(CONFIG_PACKAGE_v2ray_mini_exclude_v2ctl),y)
+ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ctl $(1)/usr/bin
 endif
 
-ifneq ($(CONFIG_PACKAGE_v2ray_mini_exclude_assets),y)
+ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 	$(INSTALL_DATA) \
 		$(PKG_BUILD_DIR)/release/config/{geoip,geosite}.dat \
-		$(1)/usr/share/v2ray
+		$(1)/usr/bin
 endif
 endef
 
-ifneq ($(CONFIG_PACKAGE_v2ray_$(BUILD_VARIANT)_exclude_assets),y)
+ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 $(eval $(call Download,geoip.dat))
 $(eval $(call Download,geosite.dat))
 endif
 
 $(eval $(call GoBinPackage,v2ray-core))
 $(eval $(call BuildPackage,v2ray-core))
-$(eval $(call GoBinPackage,v2ray-core-mini))
-$(eval $(call BuildPackage,v2ray-core-mini))
